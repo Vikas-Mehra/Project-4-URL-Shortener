@@ -52,9 +52,6 @@ const createUrl = async function (req, res) {
         .send({ status: false, message: "Please enter a valid <longUrl>." });
     }
 
-    // !/^(https:\/\/www\.|http:\/\/www\.|www\.)[a-zA-Z0-9\-_.$]+\.[a-zA-Z]{2,5}(:[0-9]{1,5})?(\/[^\s]*)?/gm.test(
-    //   longUrl
-    // )
     if (!validator.isURL(longUrl)) {
       return res
         .status(400)
@@ -118,7 +115,7 @@ const getUrl = async function (req, res) {
     //convert to object
     const urlData = JSON.parse(cachesUrlData);
     if (cachesUrlData) {
-      return res.status(302).redirect(urlData.longUrl);
+      return res.redirect(302, urlData.longUrl);
     } else {
       let findUrlCode = await urlModel
         .findOne({ urlCode: requestParams })
@@ -132,7 +129,7 @@ const getUrl = async function (req, res) {
       }
 
       await SET_ASYNC(`${requestParams}`, JSON.stringify(findUrlCode));
-      return res.status(302).redirect(findUrlCode.longUrl);
+      return res.redirect(302, findUrlCode.longUrl);
     }
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message });
